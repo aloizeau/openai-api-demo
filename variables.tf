@@ -10,8 +10,13 @@ variable "location" {
   default     = "westeurope"
 }
 
-variable "openai_deployment" {
-  description = "Nom du déploiement OpenAI" # https://learn.microsoft.com/fr-fr/azure/ai-services/openai/concepts/models
+variable "openai_deployment_model_name" {
+  description = "Nom du déploiement OpenAI"
   type        = string
-  default     = "gpt-4-turbo" # turbo-2024-04-09
+  default     = "gpt-4"
 }
+
+variable "openai_deployment_model_version" {
+  description = "Nom du déploiement OpenAI"
+  type        = string
+  default     = "turbo-2024-04-09"
