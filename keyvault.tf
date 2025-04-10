@@ -25,3 +25,9 @@ resource "azurerm_role_assignment" "secret_officer" {
   role_definition_name = "Key Vault Secrets Officer"
   principal_id         = azurerm_linux_function_app.function.identity.principal_id
 }
+
+resource "azurerm_key_vault_secret" "openai" {
+  name         = "openai"
+  value        = azurerm_cognitive_account.openai.primary_access_key
+  key_vault_id = azurerm_key_vault.kv.id
+}

@@ -50,7 +50,7 @@ resource "azurerm_linux_function_app" "function" {
     APPINSIGHTS_INSTRUMENTATIONKEY = azurerm_application_insights.ai.instrumentation_key
     AZURE_OPENAI_ENDPOINT         = azurerm_cognitive_account.openai.endpoint
     AZURE_OPENAI_API_KEY          = azurerm_cognitive_account.openai.primary_access_key
-    AZURE_OPENAI_DEPLOYMENT       = var.
+    AZURE_OPENAI_DEPLOYMENT       = var.openai_deployment_model_name
   }
   tags                = local.common_tags
   lifecycle {
