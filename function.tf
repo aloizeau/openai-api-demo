@@ -49,7 +49,7 @@ resource "azurerm_linux_function_app" "function" {
     WEBSITE_RUN_FROM_PACKAGE      = "1"
     APPINSIGHTS_INSTRUMENTATIONKEY = azurerm_application_insights.ai.instrumentation_key
     AZURE_OPENAI_ENDPOINT         = azurerm_cognitive_account.openai.endpoint
-    AZURE_OPENAI_API_KEY          = azurerm_cognitive_account.openai.primary_access_key
+    AZURE_OPENAI_API_KEY          = "@Microsoft.KeyVault(VaultName=azurerm_key_vault.kv.name;SecretName=azurerm_key_vault_secret.openai.name)"
     AZURE_OPENAI_DEPLOYMENT       = var.openai_deployment_model_name
   }
   tags                = local.common_tags
