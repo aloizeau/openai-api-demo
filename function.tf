@@ -45,14 +45,15 @@ resource "azurerm_linux_function_app" "function" {
   }
 
   app_settings = {
-    FUNCTIONS_WORKER_RUNTIME      = "python"
-    WEBSITE_RUN_FROM_PACKAGE      = "1"
+    FUNCTIONS_WORKER_RUNTIME       = "python"
+    WEBSITE_RUN_FROM_PACKAGE       = "1"
     APPINSIGHTS_INSTRUMENTATIONKEY = azurerm_application_insights.ai.instrumentation_key
-    AZURE_OPENAI_ENDPOINT         = azurerm_cognitive_account.openai.endpoint
-    AZURE_OPENAI_API_KEY          = "@Microsoft.KeyVault(VaultName=azurerm_key_vault.kv.name;SecretName=azurerm_key_vault_secret.openai.name)"
-    AZURE_OPENAI_DEPLOYMENT       = var.openai_deployment_model_name
+    AZURE_OPENAI_ENDPOINT          = azurerm_cognitive_account.openai.endpoint    
+    AZURE_OPENAI_DEPLOYMENT        = var.openai_deployment_model_name
+    KEY_VAULT_URI                  = azurerm_key_vault.kv.vault_uri
+    OPEN_AI_SECRET_KEY             = azurerm_key_vault_secret.openai.name
   }
-  tags                = local.common_tags
+  tags = local.common_tags
   lifecycle {
     ignore_changes = [
       tags["creationdate"]
