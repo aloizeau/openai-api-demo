@@ -20,10 +20,10 @@ resource "azurerm_role_assignment" "secret_officer" {
   principal_id         = data.azurerm_client_config.current.object_id
 }
 
-resource "azurerm_role_assignment" "secret_officer" {
+resource "azurerm_role_assignment" "secret_user" {
   scope                = azurerm_key_vault.kv.id
-  role_definition_name = "Key Vault Secrets Officer"
-  principal_id         = azurerm_linux_function_app.function.identity.principal_id
+  role_definition_name = "Key Vault Secrets User"
+  principal_id         = azurerm_linux_function_app.function.identity[0].principal_id
 }
 
 resource "azurerm_key_vault_secret" "openai" {
