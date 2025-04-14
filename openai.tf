@@ -27,8 +27,9 @@ resource "azurerm_cognitive_deployment" "openai-gpt" {
   }
 
   sku {
-    name = "Standard"
-  }  
+    name     = "GlobalStandard"
+    capacity = 10
+  }
 }
 
 ## Create Content Filter Policy for Azure OpenAI ##
