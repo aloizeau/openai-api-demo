@@ -46,7 +46,7 @@ Ce projet propose une solution clé en main pour déployer une Azure Function ex
 
 1. **Cloner le dépôt**
     ```bash
-    git clone https://github.com/votre-org/openai-api-demo.git
+    git clone https://github.com/aloizeau/openai-api-demo.git
     cd openai-api-demo
     ```
 
@@ -64,7 +64,13 @@ Ce projet propose une solution clé en main pour déployer une Azure Function ex
     - Utiliser Azure DevOps, GitHub Actions ou la CLI Azure pour publier le code.
 
 5. **Tester l'API**
-    - Récupérer l'URL de la Function App et effectuer une requête HTTP (exemple avec `curl`).
+    - Récupérer l'URL de la Function App et effectuer une requête HTTP (exemple avec `curl`) :
+    ```bash
+    curl -X POST https://<votre-function-app>.azurewebsites.net/api/<endpoint> \
+      -H "Content-Type: application/json" \
+      -d '{"prompt": "Bonjour, peux-tu me donner un exemple d\'utilisation ?"}'
+    ```
+    > Remplacez `<votre-function-app>` et `<endpoint>` par les valeurs appropriées.
 
 ## Sécurité
 
