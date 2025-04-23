@@ -68,9 +68,10 @@ Ce projet propose une solution clé en main pour déployer une Azure Function ex
     ```bash
     curl -X POST https://<votre-function-app>.azurewebsites.net/api/<endpoint> \
       -H "Content-Type: application/json" \
+      -H "x-functions-key: <votre-function-key>" \
       -d '{"prompt": "Bonjour, peux-tu me donner un exemple d\'utilisation ?"}'
     ```
-    > Remplacez `<votre-function-app>` et `<endpoint>` par les valeurs appropriées.
+    > Remplacez `<votre-function-app>`, `<votre-function-key>` et `<endpoint>` par les valeurs appropriées.
 
 ## Sécurité
 
