@@ -68,8 +68,11 @@ resource "azurerm_linux_function_app" "function" {
   }
   site_config {
     application_insights_key = azurerm_application_insights.ai.instrumentation_key
+    http2_enabled            = true
+    minimum_tls_version      = "1.2"
+    
     application_stack {
-      python_version = "3.13"
+      python_version = "3.12"
     }
   }
 
