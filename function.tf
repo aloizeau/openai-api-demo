@@ -15,7 +15,30 @@ resource "azurerm_storage_account" "sa" {
 resource "azurerm_role_assignment" "blob" {
   scope                = azurerm_storage_account.sa.id
   role_definition_name = "Storage Blob Data Contributor"
-  principal_id         = data.azurerm_client_config.current.object_id  
+  principal_id         = data.azurerm_client_config.current.object_id
+}
+
+
+resource "archive_file" "function_package" {
+  type        = "zip"
+  source_dir  = "${path.module}/src"
+  output_path = "${path.module}/function_code.zip"
+}
+
+resource "azurerm_storage_container" "function_releases" {
+  name                  = "function-releases"
+  storage_account_id    = azurerm_storage_account.sa.id
+  container_access_type = "private"
+  depends_on            = [azurerm_role_assignment.blob]
+}
+
+resource "azurerm_storage_blob" "function_zip" {
+  name                   = "function_code.zip"
+  storage_account_name   = azurerm_storage_account.sa.name
+  storage_container_name = azurerm_storage_container.function_releases.name
+  type                   = "Block"
+  source                 = archive_file.function_package.output_path
+  content_type           = "application/zip"
 }
 
 resource "azurerm_service_plan" "plan" {
@@ -58,6 +81,7 @@ resource "azurerm_linux_function_app" "function" {
     AZURE_OPENAI_API_VERSION       = var.openai_deployment_model_version
     KEY_VAULT_URI                  = azurerm_key_vault.kv.vault_uri
     OPEN_AI_SECRET_KEY             = azurerm_key_vault_secret.openai.name
+    WEBSITE_RUN_FROM_PACKAGE       = azurerm_storage_blob.function_zip.url
   }
   tags = local.common_tags
   lifecycle {
@@ -65,58 +89,4 @@ resource "azurerm_linux_function_app" "function" {
       tags["creationdate"]
     ]
   }
-}
-
-resource "archive_file" "function_package" {
-  type        = "zip"
-  source_dir  = "${path.module}/src"
-  output_path = "${path.module}/function_code.zip"
-}
-
-resource "azurerm_storage_container" "function_releases" {
-  name                  = "function-releases"
-  storage_account_id    = azurerm_storage_account.sa.id
-  container_access_type = "private"
-  depends_on = [ azurerm_role_assignment.blob ]
-}
-
-resource "azurerm_storage_blob" "function_zip" {
-  name                   = "function_code.zip"
-  storage_account_name   = azurerm_storage_account.sa.name
-  storage_container_name = azurerm_storage_container.function_releases.name
-  type                   = "Block"
-  source                 = archive_file.function_package.output_path
-  content_type           = "application/zip"
-}
-
-resource "azurerm_linux_function_app" "function_with_package" {
-  name                       = azurerm_linux_function_app.function.name
-  location                   = azurerm_linux_function_app.function.location
-  resource_group_name        = azurerm_linux_function_app.function.resource_group_name
-  service_plan_id            = azurerm_linux_function_app.function.service_plan_id
-  storage_account_name       = azurerm_linux_function_app.function.storage_account_name
-  storage_account_access_key = azurerm_linux_function_app.function.storage_account_access_key
-
-  identity {
-    type = "SystemAssigned"
-  }
-  site_config {
-    application_stack {
-      python_version = "3.13"
-    }
-  }
-
-  app_settings = merge(
-    azurerm_linux_function_app.function.app_settings,
-    {
-      WEBSITE_RUN_FROM_PACKAGE = azurerm_storage_blob.function_zip.url
-    }
-  )
-  tags = local.common_tags
-  lifecycle {
-    ignore_changes = [
-      tags["creationdate"]
-    ]
-  }
-  depends_on = [azurerm_storage_blob.function_zip]
 }
