@@ -27,19 +27,19 @@ variable "project_name" {
 variable "location" {
   description = "Azure region to locate resources"
   type        = string
-  default     = "westeurope"
+  default     = "Sweden Central"
 }
 
 variable "openai_deployment_model_name" {
   description = "Name of OpenAI model"
   type        = string
-  default     = "gpt-4"
+  default     = "gpt-4.5-preview"
 }
 
 variable "openai_deployment_model_version" {
   description = "Version of OpenAI model"
   type        = string
-  default     = "turbo-2024-04-09"
+  default     = "2025-02-27"
 }
 
 ## Azure OpenAI Policy Block Enabled Variable ##

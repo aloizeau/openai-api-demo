@@ -41,7 +41,6 @@ resource "azurerm_linux_function_app" "function" {
     application_stack {
       python_version = "3.10"
     }
-    linux_fx_version = "Python|3.10"
   }
 
   app_settings = {
@@ -50,6 +49,7 @@ resource "azurerm_linux_function_app" "function" {
     APPINSIGHTS_INSTRUMENTATIONKEY = azurerm_application_insights.ai.instrumentation_key
     AZURE_OPENAI_ENDPOINT          = azurerm_cognitive_account.openai.endpoint
     AZURE_OPENAI_DEPLOYMENT        = var.openai_deployment_model_name
+    AZURE_OPENAI_API_VERSION       = var.openai_deployment_model_version
     KEY_VAULT_URI                  = azurerm_key_vault.kv.vault_uri
     OPEN_AI_SECRET_KEY             = azurerm_key_vault_secret.openai.name
   }

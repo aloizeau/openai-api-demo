@@ -34,119 +34,25 @@ resource "azurerm_cognitive_deployment" "openai-gpt" {
 
 ## Create Content Filter Policy for Azure OpenAI ##
 resource "azurerm_cognitive_account_rai_policy" "content_filter" {
-  name                 = "kopicloud-aoi-cf"
+  name                 = format("%s-content-filter", var.project_name)
   cognitive_account_id = azurerm_cognitive_account.openai.id
   base_policy_name     = "Microsoft.Default"
 
-  content_filter {
-    name               = "Profanity"
-    filter_enabled     = true
-    block_enabled      = var.openai_content_filter_block_enabled
-    severity_threshold = var.openai_content_filter_severity_threshold
-    source             = "Completion"
-  }
-
-  content_filter {
-    name               = "Profanity"
-    filter_enabled     = true
-    block_enabled      = var.openai_content_filter_block_enabled
-    severity_threshold = var.openai_content_filter_severity_threshold
-    source             = "Prompt"
-  }
-
-  content_filter {
-    name               = "Hate"
-    filter_enabled     = true
-    block_enabled      = var.openai_content_filter_block_enabled
-    severity_threshold = var.openai_content_filter_severity_threshold
-    source             = "Completion"
-  }
-
-  content_filter {
-    name               = "Hate"
-    filter_enabled     = true
-    block_enabled      = var.openai_content_filter_block_enabled
-    severity_threshold = var.openai_content_filter_severity_threshold
-    source             = "Prompt"
-  }
-
-  content_filter {
-    name               = "Violence"
-    filter_enabled     = true
-    block_enabled      = var.openai_content_filter_block_enabled
-    severity_threshold = var.openai_content_filter_severity_threshold
-    source             = "Completion"
-  }
-
-  content_filter {
-    name               = "Violence"
-    filter_enabled     = true
-    block_enabled      = var.openai_content_filter_block_enabled
-    severity_threshold = var.openai_content_filter_severity_threshold
-    source             = "Prompt"
-  }
-
-  content_filter {
-    name               = "Sexual"
-    filter_enabled     = true
-    block_enabled      = var.openai_content_filter_block_enabled
-    severity_threshold = var.openai_content_filter_severity_threshold
-    source             = "Completion"
-  }
-
-  content_filter {
-    name               = "Sexual"
-    filter_enabled     = true
-    block_enabled      = var.openai_content_filter_block_enabled
-    severity_threshold = var.openai_content_filter_severity_threshold
-    source             = "Prompt"
-  }
-
-  content_filter {
-    name               = "SelfHarm"
-    filter_enabled     = true
-    block_enabled      = var.openai_content_filter_block_enabled
-    severity_threshold = var.openai_content_filter_severity_threshold
-    source             = "Completion"
-  }
-
-  content_filter {
-    name               = "SelfHarm"
-    filter_enabled     = true
-    block_enabled      = var.openai_content_filter_block_enabled
-    severity_threshold = var.openai_content_filter_severity_threshold
-    source             = "Prompt"
-  }
-
-  content_filter {
-    name               = "Jailbreak"
-    filter_enabled     = true
-    block_enabled      = var.openai_content_filter_block_enabled
-    severity_threshold = var.openai_content_filter_severity_threshold
-    source             = "Prompt"
-  }
-
-  content_filter {
-    name               = "Indirect Attack"
-    filter_enabled     = true
-    block_enabled      = var.openai_content_filter_block_enabled
-    severity_threshold = var.openai_content_filter_severity_threshold
-    source             = "Prompt"
-  }
-
-  content_filter {
-    name               = "Protected Material Text"
-    filter_enabled     = true
-    block_enabled      = var.openai_content_filter_block_enabled
-    severity_threshold = var.openai_content_filter_severity_threshold
-    source             = "Completion"
-  }
-
-  content_filter {
-    name               = "Protected Material Code"
-    filter_enabled     = true
-    block_enabled      = var.openai_content_filter_block_enabled
-    severity_threshold = var.openai_content_filter_severity_threshold
-    source             = "Completion"
+  dynamic "content_filter" {
+    for_each = flatten([
+      for filter in local.content_filters : [
+        for source in filter.sources : {
+          name   = filter.name
+          source = source
+        }
+      ]
+    ])
+    content {
+      name               = content_filter.value.name
+      filter_enabled     = true
+      block_enabled      = var.openai_content_filter_block_enabled
+      severity_threshold = var.openai_content_filter_severity_threshold
+      source             = content_filter.value.source
+    }
   }
 }
