@@ -6,5 +6,5 @@ locals {
     deploymentMode = "terraform"
     env            = "demo"
     repository     = "https://github.dev/aloizeau/openai-api-demo"
-  }  
+  }
 }

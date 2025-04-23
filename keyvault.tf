@@ -6,7 +6,7 @@ resource "azurerm_key_vault" "kv" {
   sku_name                  = "standard"
   enable_rbac_authorization = true
 
-  tags     = local.common_tags
+  tags = local.common_tags
   lifecycle {
     ignore_changes = [
       tags["creationdate"]

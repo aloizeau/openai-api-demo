@@ -1,3 +1,23 @@
+variable "client_id" {
+  description = "Client ID of the service principal"
+  type        = string
+}
+
+variable "client_secret" {
+  description = "Client secret of the service principal"
+  type        = string
+}
+
+variable "tenant_id" {
+  description = "Tenant ID of the Azure subscription"
+  type        = string
+}
+
+variable "subscription_id" {
+  description = "Subscription ID of the Azure subscription"
+  type        = string
+}
+
 variable "project_name" {
   description = "Project name"
   type        = string
