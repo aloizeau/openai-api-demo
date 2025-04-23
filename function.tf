@@ -67,6 +67,7 @@ resource "azurerm_linux_function_app" "function" {
     type = "SystemAssigned"
   }
   site_config {
+    application_insights_key = azurerm_application_insights.ai.instrumentation_key
     application_stack {
       python_version = "3.13"
     }
