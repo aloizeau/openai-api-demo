@@ -6,6 +6,7 @@ resource "azurerm_application_insights" "ai" {
   retention_in_days   = 30
   workspace_id        = azurerm_log_analytics_workspace.law.id
   tags                = local.common_tags
+  disable_ip_masking = true
   lifecycle {
     ignore_changes = [
       tags["creationdate"]
