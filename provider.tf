@@ -23,5 +23,9 @@ terraform {
       source  = "hashicorp/azurerm"
       version = "~> 4.26.0"
     }
+    archive = {
+      source  = "hashicorp/archive"
+      version = "~> 2.7.0"
+    }
   }
 }

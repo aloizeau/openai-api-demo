@@ -12,6 +12,12 @@ resource "azurerm_storage_account" "sa" {
   }
 }
 
+resource "azurerm_role_assignment" "blob" {
+  scope                = azurerm_storage_account.sa.id
+  role_definition_name = "Storage Blob Data Contributor"
+  principal_id         = data.azurerm_client_config.current.object_id  
+}
+
 resource "azurerm_service_plan" "plan" {
   name                = format("%s-plan", var.project_name)
   location            = azurerm_resource_group.rg.location
@@ -39,7 +45,7 @@ resource "azurerm_linux_function_app" "function" {
   }
   site_config {
     application_stack {
-      python_version = "3.10"
+      python_version = "3.13"
     }
   }
 
@@ -67,18 +73,20 @@ resource "archive_file" "function_package" {
   output_path = "${path.module}/function_code.zip"
 }
 
-resource "azurerm_storage_blob" "function_zip" {
-  name                   = "function_code.zip"
-  storage_account_name   = azurerm_storage_account.sa.name
-  storage_container_name = "function-releases"
-  type                   = "Block"
-  source                 = archive_file.function_package.output_path
-}
-
 resource "azurerm_storage_container" "function_releases" {
   name                  = "function-releases"
   storage_account_id    = azurerm_storage_account.sa.id
   container_access_type = "private"
+  depends_on = [ azurerm_role_assignment.blob ]
+}
+
+resource "azurerm_storage_blob" "function_zip" {
+  name                   = "function_code.zip"
+  storage_account_name   = azurerm_storage_account.sa.name
+  storage_container_name = azurerm_storage_container.function_releases.name
+  type                   = "Block"
+  source                 = archive_file.function_package.output_path
+  content_type           = "application/zip"
 }
 
 resource "azurerm_linux_function_app" "function_with_package" {
